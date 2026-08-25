@@ -16,7 +16,3 @@ class VcamService : Service() {
         override fun getFormat() = 2 // I420
     }
 }
-
-object FramePumpHolder {
-    val pump = FramePump()
-}

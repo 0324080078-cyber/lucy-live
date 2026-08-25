@@ -4,6 +4,7 @@ import android.media.MediaCodec
 import android.media.MediaFormat
 import android.opengl.EGL14
 import android.opengl.GLES20
+import android.opengl.GLES30
 import android.view.Surface
 import com.pedro.common.ConnectChecker
 import com.pedro.encoder.Frame
@@ -151,7 +152,7 @@ class Streamer(private val url: String) {
             val cfg = arrayOfNulls<android.opengl.EGLConfig>(1)
             val n = IntArray(1)
             EGL14.eglChooseConfig(display,
-                intArrayOf(EGL14.EGL_RENDER_TYPE, EGL14.EGL_WINDOW_BIT,
+                intArrayOf(EGL14.EGL_RENDERABLE_TYPE, EGL14.EGL_OPENGL_ES2_BIT,
                     EGL14.EGL_RED_SIZE, 8, EGL14.EGL_GREEN_SIZE, 8,
                     EGL14.EGL_BLUE_SIZE, 8, EGL14.EGL_ALPHA_SIZE, 8, EGL14.EGL_NONE),
                 0, cfg, 0, 1, n, 0)
@@ -214,7 +215,7 @@ class Streamer(private val url: String) {
 
         private fun upload(tex: Int, data: ByteBuffer, w: Int, h: Int) {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, tex)
-            GLES20.glPixelStorei(GLES20.GL_UNPACK_ROW_LENGTH, 0)
+            GLES20.glPixelStorei(GLES30.GL_UNPACK_ROW_LENGTH, 0)
             GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE, w, h, 0,
                 GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE, data)
         }

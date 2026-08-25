@@ -39,7 +39,7 @@ configurations.all {
 
 dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     // org.webrtc.* comes from Decart's transitive dep (io.github.webrtc-sdk:android),
     // which is the LiveKit-compatible build. Do NOT add org.webrtc:google-webrtc —
     // it duplicates org.webrtc.* classes and is incompatible with LiveKit.
