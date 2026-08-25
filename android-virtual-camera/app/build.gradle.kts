@@ -17,6 +17,11 @@ android {
         release { isMinifyEnabled = false }
     }
     buildFeatures { aidl = true }
+    kotlinOptions {
+        // Match Android's default Java bytecode target (1.8) to avoid the
+        // "Inconsistent JVM-target compatibility" error in :compileDebugKotlin.
+        jvmTarget = "1.8"
+    }
 }
 
 // androidx.core 1.15.0 (pulled transitively) requires compileSdk 35, but we're on 34.
