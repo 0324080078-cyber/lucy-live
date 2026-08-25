@@ -19,6 +19,15 @@ android {
     buildFeatures { aidl = true }
 }
 
+// androidx.core 1.15.0 (pulled transitively) requires compileSdk 35, but we're on 34.
+// Pin to the last 34-compatible core so the AAR metadata check passes without bumping AGP/SDK.
+configurations.all {
+    resolutionStrategy {
+        force("androidx.core:core:1.13.1")
+        force("androidx.core:core-ktx:1.13.1")
+    }
+}
+
 dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
