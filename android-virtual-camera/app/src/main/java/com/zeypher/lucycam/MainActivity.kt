@@ -22,10 +22,12 @@ class MainActivity : Activity() {
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private lateinit var status: TextView
     private lateinit var connectBtn: Button
+    private lateinit var disconnectBtn: Button
 
     private var mic: MicPitch? = null
     private var monitor: AudioTrack? = null
     private var streamer: Streamer? = null
+    private var bridge: LucyBridge? = null
     private var voiceSemi = 0.0
     private var voiceFormant = 1.0
     private var connecting = false
@@ -37,6 +39,8 @@ class MainActivity : Activity() {
             setOnClickListener { startActivityForResult(Intent(Intent.ACTION_GET_CONTENT).apply { type = "image/*" }, 1) }
         }
         connectBtn = Button(this).apply { text = "Connect Lucy"; setOnClickListener { onConnect() } }
+        disconnectBtn = Button(this).apply { text = "Disconnect"; setOnClickListener { onDisconnect() } }
+        disconnectBtn.isEnabled = false
 
         backendInput = EditText(this).apply {
             hint = "Backend URL (https://host)"
@@ -90,7 +94,7 @@ class MainActivity : Activity() {
         val col = android.widget.LinearLayout(this).apply {
             orientation = android.widget.LinearLayout.VERTICAL
             setPadding(32, 32, 32, 32)
-            addView(pick); addView(connectBtn); addView(backendInput); addView(voice); addView(presets)
+            addView(pick); addView(connectBtn); addView(disconnectBtn); addView(backendInput); addView(voice); addView(presets)
             addView(rtmpUrl); addView(live); addView(status)
         }
         setContentView(col)
@@ -130,17 +134,28 @@ class MainActivity : Activity() {
             .apply { play() }
     }
 
+    private fun onDisconnect() {
+        bridge?.disconnect()
+        bridge = null
+        connecting = false
+        connectBtn.isEnabled = true
+        disconnectBtn.isEnabled = false
+        status.text = "disconnected"
+    }
+
     private fun onConnect() {
         if (connecting) return
         connecting = true
         connectBtn.isEnabled = false
+        disconnectBtn.isEnabled = true
         status.text = "fetching token"
         prefs.edit().putString("backend", backendInput.text.toString().trim()).apply()
         scope.launch {
             try {
                 val key = fetchToken()
-                status.text = "connecting Lucy 2.5"
-                LucyBridge(this@MainActivity).connect(
+                status.text = "connecting Lucy"
+                bridge = LucyBridge(this@MainActivity)
+                bridge!!.connect(
                     apiKey = key,
                     referenceImageB64 = avatarB64,
                     initialPrompt = avatarB64?.let {
@@ -153,6 +168,7 @@ class MainActivity : Activity() {
             } catch (e: Throwable) {
                 connecting = false
                 connectBtn.isEnabled = true
+                disconnectBtn.isEnabled = false
                 status.text = "error: ${e.message}"
             }
         }
@@ -186,6 +202,8 @@ class MainActivity : Activity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        bridge?.disconnect()
+        bridge = null
         scope.cancel()
         streamer?.stop()
         mic?.stop()
