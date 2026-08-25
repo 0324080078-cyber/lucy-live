@@ -17,10 +17,14 @@ android {
         release { isMinifyEnabled = false }
     }
     buildFeatures { aidl = true }
+    // Align Java + Kotlin bytecode targets to 17 (CI uses JDK 17; AGP 8.5 supports it)
+    // so :compileDebugKotlin's JVM-target compatibility check passes.
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
     kotlinOptions {
-        // Match Android's default Java bytecode target (1.8) to avoid the
-        // "Inconsistent JVM-target compatibility" error in :compileDebugKotlin.
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
 
