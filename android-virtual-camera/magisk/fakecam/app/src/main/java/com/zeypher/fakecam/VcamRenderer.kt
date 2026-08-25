@@ -2,6 +2,7 @@ package com.zeypher.fakecam
 
 import android.opengl.EGL14
 import android.opengl.GLES20
+import android.opengl.GLES30
 import android.view.Surface
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -113,9 +114,9 @@ class VcamRenderer(surfaces: List<Surface>) {
                 if (frame == null) { Thread.sleep(8); continue }
                 GLES20.glUseProgram(program)
 
-                upload(texY, frame.y, w, h)
-                upload(texU, frame.u, w / 2, h / 2)
-                upload(texV, frame.v, w / 2, h / 2)
+                upload(texY, frame.first, w, h)
+                upload(texU, frame.second, w / 2, h / 2)
+                upload(texV, frame.third, w / 2, h / 2)
 
                 GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
                 GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texY)
@@ -149,7 +150,7 @@ class VcamRenderer(surfaces: List<Surface>) {
 
     private fun upload(tex: Int, data: ByteBuffer, w: Int, h: Int) {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, tex)
-        GLES20.glPixelStorei(GLES20.GL_UNPACK_ROW_LENGTH, 0)
+        GLES20.glPixelStorei(GLES30.GL_UNPACK_ROW_LENGTH, 0)
         GLES20.glTexImage2D(
             GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE, w, h, 0,
             GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE, data

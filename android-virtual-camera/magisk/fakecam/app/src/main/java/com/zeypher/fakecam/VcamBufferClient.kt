@@ -64,7 +64,7 @@ object VcamBufferClient {
             try {
                 val stub = IVcamBuffer.Stub.asInterface(service)
                 val pfd: ParcelFileDescriptor = stub.buffer
-                val mem = SharedMemory.fromFileDescriptor(pfd.fileDescriptor)
+                val mem = SharedMemory.fromFileDescriptor(pfd)
                 buf = mem.mapReadOnly()
                 ready = true
                 last = -1
