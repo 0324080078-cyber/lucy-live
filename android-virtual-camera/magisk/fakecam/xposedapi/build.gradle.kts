@@ -1,6 +1,22 @@
 plugins {
-    kotlin("jvm") version "1.9.24"
+    id("com.android.library")
+    kotlin("android") version "1.9.24"
 }
 
-group = "com.zeypher"
-version = "1.0"
+android {
+    namespace = "de.robv.android.xposed"
+    compileSdk = 34
+
+    defaultConfig {
+        minSdk = 24
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
