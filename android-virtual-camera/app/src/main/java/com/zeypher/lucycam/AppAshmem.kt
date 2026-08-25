@@ -2,6 +2,7 @@ package com.zeypher.lucycam
 
 import android.os.ParcelFileDescriptor
 import android.os.SharedMemory
+import java.io.FileDescriptor
 import java.nio.ByteBuffer
 
 /**
@@ -10,6 +11,17 @@ import java.nio.ByteBuffer
  * (LSPosed module), and the in-app Streamer reads from it. One region, no dupes.
  */
 object AppAshmem {
+    init {
+        // Exempt all hidden (non-SDK) APIs so reflection on SharedMemory.getFileDescriptor()
+        // / getFd() works regardless of the device's hidden-API policy.
+        try {
+            val vm = Class.forName("dalvik.system.VMRuntime")
+            val runtime = vm.getMethod("getRuntime").invoke(null)
+            vm.getMethod("setHiddenApiExemptions", Array<String>::class.java)
+                .invoke(runtime, arrayOf("L"))
+        } catch (_: Exception) { }
+    }
+
     val mem: SharedMemory = SharedMemory.create(AshmemBuffer.NAME, AshmemBuffer.SIZE)
     val buf: ByteBuffer = mem.mapReadWrite()
 
@@ -23,7 +35,21 @@ object AppAshmem {
         buf.putInt(AshmemBuffer.OFF_FRAME, 0)
     }
 
-    fun fd(): ParcelFileDescriptor = ParcelFileDescriptor.dup(mem.getFileDescriptor())
+    /**
+     * Expose the ashmem fd to another process. SharedMemory.getFileDescriptor() is a
+     * @hide (non-SDK) method, and getFd() is @UnsupportedAppUsage, so we obtain the
+     * FileDescriptor via reflection. This app runs rooted / inside LSPosed where the
+     * hidden-API restriction is bypassed.
+     */
+    fun fd(): ParcelFileDescriptor {
+        val fd = try {
+            SharedMemory::class.java.getMethod("getFileDescriptor").invoke(mem) as FileDescriptor
+        } catch (_: Exception) {
+            val raw = SharedMemory::class.java.getMethod("getFd").invoke(mem) as Int
+            return ParcelFileDescriptor.fromFd(raw)
+        }
+        return ParcelFileDescriptor.dup(fd)
+    }
 
     fun slotOffset(seq: Int) = AshmemBuffer.slotOffset(seq)
 
