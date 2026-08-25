@@ -20,7 +20,7 @@ class FramePump : VideoSink {
     }
 
     override fun onFrame(frame: VideoFrame) {
-        val i420 = frame.buffer.toI420()
+        val i420 = frame.buffer.toI420() ?: return
         try {
             AppAshmem.writeSlot(i420)
         } finally {

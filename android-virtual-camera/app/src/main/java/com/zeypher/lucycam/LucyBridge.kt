@@ -2,7 +2,7 @@ package com.zeypher.lucycam
 
 import ai.decart.sdk.DecartClient
 import ai.decart.sdk.DecartClientConfig
-import ai.decart.sdk.InitialPrompt
+import ai.decart.sdk.realtime.InitialPrompt
 import ai.decart.sdk.RealtimeModels
 import ai.decart.sdk.realtime.ConnectOptions
 import ai.decart.sdk.realtime.RealTimeClient

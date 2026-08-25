@@ -187,7 +187,8 @@ class Streamer(private val url: String) {
             val halfH = height / 2
             while (running) {
                 try {
-                    val f = AppAshmem.readLatest() ?: run { Thread.sleep(8); continue }
+                    val f = AppAshmem.readLatest()
+                    if (f == null) { Thread.sleep(8); continue }
                     GLES20.glUseProgram(program)
                     upload(texY, f.first, width, height)
                     upload(texU, f.second, halfW, halfH)

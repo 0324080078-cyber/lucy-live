@@ -113,10 +113,19 @@ class MainActivity : Activity() {
     }
 
     private fun createMonitorTrack(): AudioTrack {
-        return AudioTrack.Builder()
+        val fmt = android.media.AudioFormat.Builder()
             .setSampleRate(48000)
             .setChannelMask(android.media.AudioFormat.CHANNEL_OUT_MONO)
-            .setAudioFormat(android.media.AudioFormat.ENCODING_PCM_16BIT)
+            .setEncoding(android.media.AudioFormat.ENCODING_PCM_16BIT)
+            .build()
+        return AudioTrack.Builder()
+            .setAudioAttributes(
+                android.media.AudioAttributes.Builder()
+                    .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
+                    .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .build()
+            )
+            .setAudioFormat(fmt)
             .build()
             .apply { play() }
     }
