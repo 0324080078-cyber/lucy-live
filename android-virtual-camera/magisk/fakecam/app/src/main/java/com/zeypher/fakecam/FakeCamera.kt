@@ -48,7 +48,7 @@ class FakeCamera : IXposedMod {
         } catch (t: Throwable) { Log.e(TAG, "hook fail", t) }
     }
 
-    private fun hookCameraManager(loader: ClassLoader) {
+    private fun hookCameraManager(loader: ClassLoader?) {
         // 1) enumerate -> add our id
         XposedHelpers.findAndHookMethod(
             CameraManager::class.java.name, loader, "getCameraIdList",

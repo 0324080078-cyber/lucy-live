@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.ParcelFileDescriptor
 import android.os.SharedMemory
+import com.zeypher.lucycam.IVcamBuffer
 import de.robv.android.xposed.helpers.AndroidAppHelper
 import java.nio.ByteBuffer
 

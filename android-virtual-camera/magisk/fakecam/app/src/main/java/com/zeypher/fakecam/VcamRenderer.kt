@@ -55,7 +55,7 @@ class VcamRenderer(surfaces: List<Surface>) {
         EGL14.eglChooseConfig(
             display,
             intArrayOf(
-                EGL14.EGL_RENDER_TYPE, EGL14.EGL_WINDOW_BIT,
+                EGL14.EGL_RENDERABLE_TYPE, EGL14.EGL_OPENGL_ES2_BIT,
                 EGL14.EGL_RED_SIZE, 8, EGL14.EGL_GREEN_SIZE, 8,
                 EGL14.EGL_BLUE_SIZE, 8, EGL14.EGL_ALPHA_SIZE, 8,
                 EGL14.EGL_NONE
