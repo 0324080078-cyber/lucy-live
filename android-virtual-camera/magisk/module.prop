@@ -1,0 +1,6 @@
+id=lucy-vcam
+name=Lucy Virtual Camera
+version=1.0
+versionCode=1
+author=He
+description=Exposes a virtual camera (lucy_vcam) fed by the Lucy Live app. Requires the Lucy FakeCamera LSPosed module active.

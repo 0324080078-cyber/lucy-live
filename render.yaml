@@ -1,0 +1,16 @@
+# Render.com config for the combined Lucy Live image (backend + PWA in one container).
+# Set DECART_API_KEY and RTMP_URL as "Secret" env vars in the Render dashboard.
+services:
+  - type: web
+    name: lucy-live
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: DECART_API_KEY
+        sync: false
+      - key: RTMP_URL
+        sync: false

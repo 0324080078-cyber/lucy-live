@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:hasCode="true" android:label="Lucy FakeCamera">
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+        <meta-data
+            android:name="xposeddescription"
+            android:value="Injects Lucy 2.5 avatar as a virtual camera (lucy_vcam)" />
+        <meta-data
+            android:name="xposedminversion"
+            android:value="82" />
+    </application>
+</manifest>

@@ -1,0 +1,12 @@
+# Node / web
+node_modules/
+dist/
+*.log
+
+# Android build outputs
+android-virtual-camera/**/build/
+android-virtual-camera/**/.gradle/
+*.apk
+
+# OS
+.DS_Store

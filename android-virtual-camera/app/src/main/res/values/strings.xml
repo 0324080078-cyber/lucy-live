@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lucy Live</string>
+    <!-- Default backend host. Override at runtime in the app UI; value is persisted. -->
+    <string name="backend_url">https://your-backend-host.example.com</string>
+</resources>
