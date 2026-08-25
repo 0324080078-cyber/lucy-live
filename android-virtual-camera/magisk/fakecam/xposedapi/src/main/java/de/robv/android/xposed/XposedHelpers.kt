@@ -4,6 +4,7 @@ import de.robv.android.xposed.XC_MethodHook.Unhook
 
 object XposedHelpers {
     @JvmStatic
+    @Suppress("UNUSED_PARAMETER")
     fun findAndHookMethod(
         className: String?,
         classLoader: ClassLoader?,
@@ -12,6 +13,7 @@ object XposedHelpers {
     ): Unhook? = null
 
     @JvmStatic
+    @Suppress("UNUSED_PARAMETER")
     fun findAndHookMethod(
         clazz: Class<*>?,
         classLoader: ClassLoader?,
