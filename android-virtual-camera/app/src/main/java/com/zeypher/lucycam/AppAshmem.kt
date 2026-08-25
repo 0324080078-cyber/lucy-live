@@ -23,7 +23,7 @@ object AppAshmem {
         buf.putInt(AshmemBuffer.OFF_FRAME, 0)
     }
 
-    fun fd(): ParcelFileDescriptor = ParcelFileDescriptor.fromFd(mem.fileDescriptor.fd)
+    fun fd(): ParcelFileDescriptor = ParcelFileDescriptor.dup(mem.getFileDescriptor())
 
     fun slotOffset(seq: Int) = AshmemBuffer.slotOffset(seq)
 
