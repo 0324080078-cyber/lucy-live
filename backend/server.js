@@ -86,7 +86,7 @@ wss.on("connection", (ws) => {
 
 // Optionally serve a prebuilt PWA from PWA_DIR (see HOSTING.md). The Android
 // app only needs /api/token, so this is skipped when the dir is absent.
-const PWA_DIR = process.env.PWA_DIR || path.join(__dirname, "../../app/dist");
+const PWA_DIR = path.resolve(process.env.PWA_DIR || path.join(__dirname, "../../app/dist"));
 if (existsSync(PWA_DIR)) {
   console.log(`[static] serving PWA from ${PWA_DIR}`);
   app.use(express.static(PWA_DIR));
