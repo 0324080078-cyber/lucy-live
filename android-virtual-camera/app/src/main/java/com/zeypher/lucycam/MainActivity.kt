@@ -97,7 +97,8 @@ class MainActivity : Activity() {
 
         status = TextView(this).apply { text = "idle" }
 
-        eglContext = EglBase.create().eglContext
+        val eglBase = EglBase.create()
+        eglContext = eglBase.eglContext
         videoView = SurfaceViewRenderer(this).apply {
             init(eglContext, null)
             setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT)
