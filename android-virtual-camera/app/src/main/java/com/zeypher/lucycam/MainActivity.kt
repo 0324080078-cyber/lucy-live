@@ -11,6 +11,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import kotlinx.coroutines.*
+import org.webrtc.EglBase
+import org.webrtc.RendererCommon
+import org.webrtc.SurfaceViewRenderer
 import java.io.ByteArrayOutputStream
 
 class MainActivity : Activity() {
@@ -28,6 +31,8 @@ class MainActivity : Activity() {
     private var monitor: AudioTrack? = null
     private var streamer: Streamer? = null
     private var bridge: LucyBridge? = null
+    private lateinit var eglContext: EglBase.Context
+    private lateinit var videoView: SurfaceViewRenderer
     private var voiceSemi = 0.0
     private var voiceFormant = 1.0
     private var connecting = false
@@ -91,9 +96,19 @@ class MainActivity : Activity() {
         }
 
         status = TextView(this).apply { text = "idle" }
+
+        eglContext = EglBase.create().eglContext
+        videoView = SurfaceViewRenderer(this).apply {
+            init(eglContext, null)
+            setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT)
+            setZOrderMediaOverlay(true)
+        }
+
         val col = android.widget.LinearLayout(this).apply {
             orientation = android.widget.LinearLayout.VERTICAL
             setPadding(32, 32, 32, 32)
+            addView(videoView, android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f))
             addView(pick); addView(connectBtn); addView(disconnectBtn); addView(backendInput); addView(voice); addView(presets)
             addView(rtmpUrl); addView(live); addView(status)
         }
@@ -161,7 +176,8 @@ class MainActivity : Activity() {
                     initialPrompt = avatarB64?.let {
                         "Substitute the character in the video with the person in the reference image."
                     } ?: "Change the background to a neon-lit cyberpunk city street at night.",
-                    onStatus = { status.text = it }
+                    onStatus = { status.text = it },
+                    displaySink = videoView
                 )
                 connecting = false
                 connectBtn.isEnabled = true
@@ -204,6 +220,7 @@ class MainActivity : Activity() {
         super.onDestroy()
         bridge?.disconnect()
         bridge = null
+        videoView.release()
         scope.cancel()
         streamer?.stop()
         mic?.stop()

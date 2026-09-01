@@ -25,7 +25,8 @@ class LucyBridge(private val context: Context) {
         apiKey: String,
         referenceImageB64: String?,
         initialPrompt: String,
-        onStatus: (String) -> Unit
+        onStatus: (String) -> Unit,
+        displaySink: org.webrtc.VideoSink? = null
     ) {
         val client = DecartClient(context, DecartClientConfig(apiKey = apiKey))
         this.client = client
@@ -48,6 +49,7 @@ class LucyBridge(private val context: Context) {
                 initialImage = image,
                 onRemoteVideoTrack = { track ->
                     track.addSink(FramePumpHolder.pump)
+                    displaySink?.let { track.addSink(it) }
                     sinkAttached = true
                     onStatus("avatar live")
                 }
