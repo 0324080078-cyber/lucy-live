@@ -21,11 +21,13 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
-
-      - name: Install SDK packages
-        run: |
-          sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
-          yes | sdkmanager --licenses || true
+        with:
+          cmdline-tools-version: 16.0
+          packages: |
+            platform-tools
+            platforms;android-34
+            build-tools;34.0.0
+          accept-android-sdk-license: true
 
       - name: Build Lucy Live app
         uses: gradle/gradle-build-action@v3
