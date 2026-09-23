@@ -20,13 +20,10 @@ jobs:
           java-version: 17
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          packages: |
-            platform-tools
-            platforms;android-34
-            build-tools;34.0.0
-          accept-android-sdk-licenses: true
+        run: |
+          echo "sdkmanager.dir=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+          yes | sdkmanager --licenses || true
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
       - name: Build Lucy Live app
         uses: gradle/gradle-build-action@v3
