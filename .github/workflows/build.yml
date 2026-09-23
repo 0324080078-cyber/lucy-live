@@ -1,13 +1,12 @@
 name: Build Lucy Live
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   workflow_dispatch:
-  pull_request:
 
 jobs:
   android:
-    name: Build Android (app + LSPosed module + Magisk zip)
+    name: Build Android
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,49 +17,29 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v4
-        with:
-          packages: |
-            platform-tools
-            platforms;android-34
-            build-tools;34.0.0
-          accept-android-sdk-licenses: true
+      - name: Install Android SDK
+        run: |
+          export PATH="$PATH:/usr/local/lib/android/sdk/cmdline-tools/latest/bin"
+          export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
+          export ANDROID_HOME=$ANDROID_SDK_ROOT
+          sdkmanager --licenses || true
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
-      - name: Build Lucy Live app
+      - name: Build app
         uses: gradle/gradle-build-action@v3
         with:
           gradle-version: 8.9
           build-root-directory: android-virtual-camera/app
           arguments: assembleDebug
 
-      - name: Build LSPosed virtual-camera module
-        uses: gradle/gradle-build-action@v3
-        with:
-          gradle-version: 8.9
-          build-root-directory: android-virtual-camera/magisk/fakecam
-          arguments: assembleDebug
-
-      - name: Package Magisk module zip
-        run: |
-          cd android-virtual-camera/magisk
-          mkdir -p lucy-vcam/fakecam
-          cp module.prop customize.sh service.sh HAL_SHIM.md lucy-vcam/
-          cp ../README.md lucy-vcam/README.md 2>/dev/null || true
-          cp fakecam/app/build/outputs/apk/debug/app-debug.apk lucy-vcam/fakecam/lucy-fakecam.apk
-          (cd lucy-vcam && zip -r ../lucy-vcam-magisk.zip .)
-
-      - name: Upload artifacts
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: lucy-live-android
-          path: |
-            android-virtual-camera/app/build/outputs/apk/debug/*.apk
-            android-virtual-camera/magisk/fakecam/app/build/outputs/apk/debug/*.apk
-            android-virtual-camera/magisk/lucy-vcam-magisk.zip
+          path: android-virtual-camera/app/build/outputs/apk/debug/*.apk
 
   pwa:
-    name: Build PWA (web avatar)
+    name: Build PWA
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -79,14 +58,14 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Upload PWA artifact
+      - name: Upload PWA
         uses: actions/upload-artifact@v4
         with:
           name: lucy-live-pwa
           path: app/dist
 
   publish-backend:
-    name: Build & push backend image (GHCR)
+    name: Build & push backend image
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
     permissions:
@@ -94,10 +73,6 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-
-      - name: Lowercase image name
-        id: meta
-        run: echo "image=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')/lucy-live-backend" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -116,5 +91,5 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            ${{ steps.meta.outputs.image }}:latest
-            ${{ steps.meta.outputs.image }}:${{ github.sha }}
+            ghcr.io/0324080078-cyber/lucy-live-backend:latest
+            ghcr.io/0324080078-cyber/lucy-live-backend:${{ github.sha }}
