@@ -21,7 +21,8 @@ jobs:
 
       - name: Set up Android SDK
         run: |
-          echo "sdkmanager.dir=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+          export PATH="$PATH:/usr/local/lib/android/sdk/cmdline-tools/latest/bin"
+          export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
           yes | sdkmanager --licenses || true
           sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
