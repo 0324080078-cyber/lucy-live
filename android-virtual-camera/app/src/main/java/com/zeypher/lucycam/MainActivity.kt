@@ -12,7 +12,6 @@ import android.widget.EditText
 import android.widget.TextView
 import kotlinx.coroutines.*
 import org.webrtc.EglBase
-import org.webrtc.RendererCommon
 import org.webrtc.SurfaceViewRenderer
 import java.io.ByteArrayOutputStream
 
@@ -31,7 +30,7 @@ class MainActivity : Activity() {
     private var monitor: AudioTrack? = null
     private var streamer: Streamer? = null
     private var bridge: LucyBridge? = null
-    private lateinit var eglContext: EglBase.Context
+    private lateinit var eglBase: EglBase
     private lateinit var videoView: SurfaceViewRenderer
     private var voiceSemi = 0.0
     private var voiceFormant = 1.0
@@ -97,11 +96,9 @@ class MainActivity : Activity() {
 
         status = TextView(this).apply { text = "idle" }
 
-        val eglBase = EglBase.create()
-        eglContext = eglBase.eglContext
+        eglBase = EglBase.create()
         videoView = SurfaceViewRenderer(this).apply {
-            init(eglContext, null)
-            setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT)
+            init(eglBase.eglBaseContext, null)
             setZOrderMediaOverlay(true)
         }
 
