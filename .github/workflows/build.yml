@@ -1,5 +1,4 @@
 name: Build Lucy Live
-
 on:
   push:
     branches: [main, master]
@@ -20,11 +19,13 @@ jobs:
           java-version: 17
 
       - name: Set up Android SDK
-        run: |
-          export PATH="$PATH:/usr/local/lib/android/sdk/cmdline-tools/latest/bin"
-          export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
-          yes | sdkmanager --licenses || true
-          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+        uses: android-actions/setup-android@v4
+        with:
+          packages: |
+            platform-tools
+            platforms;android-34
+            build-tools;34.0.0
+          accept-android-sdk-licenses: true
 
       - name: Build Lucy Live app
         uses: gradle/gradle-build-action@v3
@@ -87,7 +88,6 @@ jobs:
   publish-backend:
     name: Build & push backend image (GHCR)
     runs-on: ubuntu-latest
-    # Don't push from PRs/forked refs.
     if: github.event_name != 'pull_request'
     permissions:
       contents: read
@@ -118,4 +118,3 @@ jobs:
           tags: |
             ${{ steps.meta.outputs.image }}:latest
             ${{ steps.meta.outputs.image }}:${{ github.sha }}
-# 1790124365
